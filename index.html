@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>С 18-летием, мое любимое солнышко 🌸</title>
+<style>
+  :root{
+    --bg1:#1a0e2e; --bg2:#2d1a4a;
+    --pink:#ff6ec7; --mint:#7fe5d0; --gold:#ffd166;
+    --text:#f5e9ff; --muted:#b8a8d0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{overflow-x:hidden;}
+  body{
+    font-family:-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:radial-gradient(circle at 20% 0%,var(--bg1) 0%,var(--bg2) 60%,#0e0717 100%);
+    color:var(--text);min-height:100vh;line-height:1.65;
+    touch-action:manipulation;position:relative;
+  }
+  button{-webkit-tap-highlight-color:transparent;font-family:inherit;}
+
+  .flyer{position:fixed;pointer-events:none;z-index:0;opacity:.85;filter:drop-shadow(0 0 8px rgba(255,110,199,.4));}
+  @keyframes drift{0%{transform:translateY(0) rotate(0)}50%{transform:translateY(-30px) rotate(180deg)}100%{transform:translateY(0) rotate(360deg)}}
+  @keyframes walk{0%{transform:translateX(-80px)}100%{transform:translateX(110vw)}}
+  @keyframes sparkle{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+  @keyframes pop{0%{transform:scale(0);opacity:0}60%{transform:scale(1.15);opacity:1}100%{transform:scale(1);opacity:1}}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  #game{position:relative;z-index:2;max-width:680px;margin:0 auto;padding:50px 22px;min-height:100vh;display:flex;flex-direction:column;justify-content:center;transition:opacity .6s,transform .6s;}
+  #game.hide{opacity:0;transform:scale(.95);pointer-events:none;position:absolute;inset:0;}
+  .game-badge{display:inline-block;background:linear-gradient(90deg,var(--pink),var(--gold));color:#1a0e2e;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:1px;margin-bottom:16px;text-transform:uppercase;align-self:flex-start;}
+  .game-title{font-size:clamp(26px,6vw,44px);font-weight:900;line-height:1.15;margin-bottom:10px;background:linear-gradient(120deg,var(--pink),var(--mint),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .game-sub{font-size:15px;color:var(--muted);margin-bottom:30px;}
+
+  .q-block{display:none;}
+  .q-block.active{display:block;animation:slideIn .5s ease;}
+  @keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .q-text{font-size:18px;font-weight:600;margin-bottom:20px;min-height:60px;}
+  .q-num{font-size:12px;color:var(--pink);font-weight:700;letter-spacing:2px;margin-bottom:6px;}
+
+  .opt{display:block;width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,110,199,.25);border-radius:14px;padding:14px 18px;color:var(--text);font-size:15px;text-align:left;cursor:pointer;margin-bottom:10px;transition:all .2s;}
+  .opt:hover,.opt:active{background:rgba(255,110,199,.15);border-color:var(--pink);transform:translateX(4px);}
+
+  .result-box{text-align:center;padding:20px 0;}
+  .result-emoji{font-size:80px;margin-bottom:20px;animation:pop .8s ease;}
+  .result-photo{
+    display:block;
+    width:100%;
+    max-width:300px;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    margin:0 auto 20px;
+    border-radius:18px;
+    border:3px solid rgba(255,110,199,.5);
+    box-shadow:0 8px 30px rgba(255,110,199,.25);
+    animation:pop .8s ease;
+  }
+  .result-title{font-size:26px;font-weight:900;margin-bottom:14px;color:var(--gold);}
+  .result-text{font-size:16px;margin-bottom:30px;}
+  .go-btn{background:linear-gradient(90deg,var(--pink),var(--gold));color:#1a0e2e;border:none;padding:16px 40px;border-radius:40px;font-size:16px;font-weight:800;cursor:pointer;letter-spacing:1px;transition:transform .2s;}
+  .go-btn:hover{transform:scale(1.05);}
+
+  #card{position:relative;z-index:2;max-width:720px;margin:0 auto;padding:40px 22px 80px;display:none;}
+  #card.show{display:block;animation:fadeUp .8s ease forwards;}
+
+  .hero{text-align:center;padding:30px 0 20px;}
+  .skz-logo{font-size:clamp(30px,8vw,56px);font-weight:900;letter-spacing:-1px;line-height:.95;background:linear-gradient(120deg,var(--pink),var(--gold),var(--mint));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:8px;}
+  .skz-sub{font-size:12px;letter-spacing:4px;color:var(--mint);font-weight:700;margin-bottom:20px;text-transform:uppercase;}
+  .hero h1{font-size:clamp(26px,6vw,42px);font-weight:800;line-height:1.15;margin-bottom:12px;}
+  .hero h1 span{background:linear-gradient(120deg,var(--pink),var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .tagline{color:var(--muted);font-size:15px;}
+
+  .block{background:rgba(255,255,255,.04);border:1px solid rgba(255,110,199,.2);border-radius:22px;padding:26px 22px;margin:22px 0;position:relative;overflow:hidden;}
+  .block::before{content:'';position:absolute;top:0;left:0;width:60px;height:4px;background:linear-gradient(90deg,var(--pink),var(--mint));border-radius:2px;}
+  .block-tag{font-size:11px;letter-spacing:3px;color:var(--mint);font-weight:700;text-transform:uppercase;margin-bottom:8px;}
+  .block h2{font-size:20px;font-weight:700;margin-bottom:14px;}
+  .block p{color:var(--muted);margin-bottom:10px;}
+  .block p:last-child{margin-bottom:0;}
+
+  .placeholder{background:rgba(255,110,199,.08);border:2px dashed rgba(255,110,199,.4);border-radius:14px;padding:16px;color:var(--muted);font-size:14px;margin:12px 0;}
+  .placeholder p{margin:0 0 12px;}
+  .placeholder p:last-child{margin-bottom:0;}
+
+  .members{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:16px;}
+  .member{background:linear-gradient(135deg,rgba(255,110,199,.15),rgba(127,229,208,.1));border:1px solid rgba(255,110,199,.3);border-radius:12px;padding:12px 8px;text-align:center;font-size:13px;font-weight:700;}
+  .member .num{display:block;font-size:10px;color:var(--pink);margin-bottom:3px;font-weight:500;letter-spacing:1px;}
+
+  .photo-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:14px;
+  }
+  .photo-grid img{
+    width:100%;
+    aspect-ratio:1/1;
+    object-fit:cover;
+    border-radius:14px;
+    border:2px solid rgba(255,110,199,.4);
+    background:rgba(255,110,199,.05);
+  }
+
+  .heroes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+  .hero-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,110,199,.2);border-radius:16px;padding:16px;text-align:center;}
+  .hero-card img,.hero-card .avatar-emoji{width:70px;height:70px;object-fit:contain;margin-bottom:8px;border-radius:50%;background:rgba(255,110,199,.1);}
+  .hero-card .avatar-emoji{font-size:50px;display:flex;align-items:center;justify-content:center;}
+  .hero-card .hero-name{font-size:14px;font-weight:700;color:var(--mint);margin-bottom:4px;}
+  .hero-card .hero-msg{font-size:12px;color:var(--muted);line-height:1.4;}
+
+  .secret-wrap{text-align:center;margin-top:30px;}
+  .secret-btn{background:linear-gradient(90deg,var(--pink),var(--gold));color:#1a0e2e;border:none;padding:16px 36px;border-radius:40px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:1px;transition:transform .2s;}
+  .secret-btn:hover{transform:scale(1.05);}
+  .secret-text{max-height:0;overflow:hidden;transition:max-height .6s,opacity .6s,margin .6s,padding .6s;opacity:0;margin-top:0;background:rgba(255,209,102,.1);border-radius:16px;padding:0 20px;}
+  .secret-text.show{max-height:3000px;opacity:1;margin-top:20px;padding:20px;}
+
+  footer{text-align:center;padding:30px 0;color:var(--muted);font-size:12px;letter-spacing:2px;}
+
+  .music-btn{position:fixed;bottom:20px;right:20px;z-index:99;background:var(--pink);color:#1a0e2e;border:none;border-radius:50%;width:56px;height:56px;font-size:24px;cursor:pointer;box-shadow:0 4px 20px rgba(255,110,199,.5);transition:transform .2s;}
+  .music-btn:hover{transform:scale(1.1);}
+</style>
+</head>
+<body>
+
+<section id="game">
+  <div class="game-badge">прожарка!</div>
+  <div class="game-title">Первый курс меда:<br>выживи и не сойди с ума</div>
+  <div class="game-sub">Выбирай разумно, а то кто знает, что будет...</div>
+
+  <div class="q-block active" data-q="0">
+    <div class="q-num">ВОПРОС 1 / 5</div>
+    <div class="q-text">Ты просыпаешься в 6 утра на анатомию. Твоя реакция?</div>
+    <button class="opt" data-point="1">Спокойно, все под контролем</button>
+    <button class="opt" data-point="2">Это фиаско, братан</button>
+    <button class="opt" data-point="3">Все, я в домике</button>
+    <button class="opt" data-point="3">Не сегодня, у меня лапки</button>
+  </div>
+
+  <div class="q-block" data-q="1">
+    <div class="q-num">ВОПРОС 2 / 5</div>
+    <div class="q-text">Препод спрашивает про строение черепа. Ты:</div>
+    <button class="opt" data-point="1">Спокойно, я все знаю</button>
+    <button class="opt" data-point="2">Ну все, я пошел</button>
+    <button class="opt" data-point="3">Мам, я все</button>
+    <button class="opt" data-point="3">Спасите</button>
+  </div>
+
+  <div class="q-block" data-q="2">
+    <div class="q-num">ВОПРОС 3 / 5</div>
+    <div class="q-text">Сессия через 2 недели. Твой план?</div>
+    <button class="opt" data-point="1">Учиться, сон для слабаков</button>
+    <button class="opt" data-point="2">Спокойно, все разрулится</button>
+    <button class="opt" data-point="3">Лягу посплю</button>
+    <button class="opt" data-point="3">Кринж, но я сдаюсь</button>
+  </div>
+
+  <div class="q-block" data-q="3">
+    <div class="q-num">ВОПРОС 4 / 5</div>
+    <div class="q-text">Ты забыла конспект дома. Что делаешь?</div>
+    <button class="opt" data-point="1">Это не баг, это фича</button>
+    <button class="opt" data-point="2">Жиза, спишу у соседки/соседа</button>
+    <button class="opt" data-point="2">Я на минималках, сойдет, обойдет</button>
+    <button class="opt" data-point="3">Все, я в домике</button>
+  </div>
+
+  <div class="q-block" data-q="4">
+    <div class="q-num">ВОПРОС 5 / 5</div>
+    <div class="q-text">Какая реакция будет на сдаче первой сессии?</div>
+    <button class="opt" data-point="1">Рюмка водки на столе</button>
+    <button class="opt" data-point="2">Мама, я фея!</button>
+    <button class="opt" data-point="2">Слезы, торт, Stray Kids</button>
+    <button class="opt" data-point="3">Я легенда, можно все</button>
+  </div>
+
+  <div class="q-block result-box" data-q="result">
+    <div class="result-emoji" id="resultEmoji">🏥</div>
+    <img id="resultPhoto" class="result-photo" alt="результат" style="display:none;">
+    <div class="result-title" id="resultTitle">Ты выжила!</div>
+    <div class="result-text" id="resultText"></div>
+    <button class="go-btn" onclick="openCard()">Взмахни палочкой 🎁</button>
+  </div>
+</section>
+
+<main id="card">
+  <div class="hero">
+    <div class="skz-logo">ТУШКАНЧИКУ</div>
+    <div class="skz-sub">× МЕД × 18 ЛЕТ × МЕЧТА</div>
+    <h1>С днем рождения,<br><span>мое любимое солнышко</span></h1>
+    <p class="tagline">с огромным сердцем 💜</p>
+  </div>
+
+  <div class="block">
+    <div class="block-tag">от меня - тебе</div>
+    <h2>ВСЕ ДЛЯ ТЕБЯ, РАССВЕТЫ И ТУМАНЫ 💌</h2>
+    <div class="placeholder">
+      <p>Полина, хочу тебя поздравить с твоим Днем Рождения. Хочу пожелать тебе всего хорошего, милого и доброго. Вот тебе уже 18 лет, теперь ты уже взрослая, хотя для родителей ты всегда будешь маленькой принцессой, которую хотят оберегать от всех невзгод.</p>
+      <p>Хотелось бы пожелать, чтобы эти невзгоды обходили тебя как можно чаще, а лучше их бы вообще не было. Хотя благодаря им мы и учимся жить в таком мире. Желаю тебе, чтобы твоя хрупкость всегда сочеталась с той внутренней силой, которая позволяет и заботиться о других, и вовремя отпинать обидчика.</p>
+      <p>Отдельно хочу сказать про твое будущее в медицине. Я вижу, как ты относишься к людям - с вниманием, с терпением, с той самой мягкостью, которую не купишь и не выучишь. Ты умеешь слушать, а это, мне кажется, половина врачебного дела. И пусть учеба будет непростой, пусть иногда будет казаться, что сил нет и все валится из рук, - помни, что твои маленькие руки уже доказали: они могут многое.</p>
+      <p>А если вдруг станет совсем тяжело, у тебя есть мы. Мы всегда готовы прийти на помощь, потому что ценим и любим тебя. Так же прошу тебя отдыхать побольше, хоть и понимаю, что учеба не позволяет сильно, но максимально многое бери от минуты отдыха. Знай, я всегда на твоей стороне и надеюсь на благое будущее.</p>
+      <p>Mi querida Polina, mi amor por los siglos (исп. Ми керида Полина, ми амор пор лос сиглос). ¡Feliz cumple! (исп. Фэлис кумпле!).</p>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-tag">📸 наше фото</div>
+    <h2>Воспоминания</h2>
+    <div class="photo-grid">
+      <img src="photo1.jpg" alt="фото 1">
+      <img src="photo2.jpg" alt="фото 2">
+      <img src="photo3.jpg" alt="фото 3">
+      <img src="photo4.jpg" alt="фото 4">
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="block-tag">🎤 специально для тебя</div>
+    <h2>Stray Kids, которые всегда с тобой</h2>
+    <p>Когда анатомия кажется неподъемной, а сессия - бесконечной, включай их на полную. Они справляются со всем - и ты справишься.</p>
+    <div class="members">
+      <div class="member"><span class="num">01</span>God’s Menu · Идеально, чтобы сразу задать настроение</div>
+      <div class="member"><span class="num">02</span>MANIAC · Мотивация</div>
+      <div class="member"><span class="num">03</span>Thunderous · Ассоциация твоего совершеннолетия</div>
+      <div class="member"><span class="num">04</span>S-Class · Супер класс для всех</div>
+      <div class="member"><span class="num">05</span>Chk Chk Boom</div>
+      <div class="member"><span class="num">06</span>LALALALA · Поздравления от героев</div>
+      <div class="member"><span class="num">07</span>CASE 143 · ❤️</div>
+      <div class="member"><span class="num">08</span>0801 · Подарок фанатам от группы</div>
+    </div>
+  </div>
+
+    <div class="block">
+    <div class="block-tag">✨ поздравления</div>
+    <h2>Тебя поздравляют:</h2>
+    <div class="heroes-grid">
+      <div class="hero-card">
+        <img src="maomao.gif" alt="Мао Мао" onerror="this.outerHTML='<div class=\'avatar-emoji\'>🐱</div>'">
+        <div class="hero-name">Мао Мао</div>
+        <div class="hero-msg">«Пусть твоя аптечка всегда будет полна лекарств, а диагнозы - только "здорова и счастлива"».</div>
+      </div>
+      <div class="hero-card">
+        <img src="tof.gif" alt="Тоф" onerror="this.outerHTML='<div class=\'avatar-emoji\'>🪨</div>'">
+        <div class="hero-name">Тоф</div>
+        <div class="hero-msg">«Будь такой же сильной, как я. И не бойся просить помощи или вреж сама».</div>
+      </div>
+      <div class="hero-card">
+        <img src="fluttershy.gif" alt="Флаттершай" onerror="this.outerHTML='<div class=\'avatar-emoji\'>🦋</div>'">
+        <div class="hero-name">Флаттершай</div>
+        <div class="hero-msg">«Твоя доброта - суперсила. Пусть вокруг будет больше цветочков и меньше стресса».</div>
+      </div>
+      <div class="hero-card">
+        <img src="hanako.gif" alt="Ханако" onerror="this.outerHTML='<div class=\'avatar-emoji\'>👻</div>'">
+        <div class="hero-name">Ханако</div>
+        <div class="hero-msg">«Даже в самой страшной сессии есть что-то веселое. Главное - не сдаваться».</div>
+      </div>
+      <div class="hero-card">
+        <img src="jax.gif" alt="Джекс" onerror="this.outerHTML='<div class=\'avatar-emoji\'>🐇</div>'">
+        <div class="hero-name">Джекс</div>
+        <div class="hero-msg">«Расслабься, все будет… ну, или не будет. Но ты справишься. Наверное. Шучу, наверное».</div>
+      </div>
+      <div class="hero-card">
+        <img src="cat.gif" alt="Котики" onerror="this.outerHTML='<div class=\'avatar-emoji\'>🐱</div>'">
+        <div class="hero-name">Котики</div>
+        <div class="hero-msg">«Мяу. То есть: ешь, спи, обнимайся».</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="secret-wrap">
+    <button class="secret-btn" onclick="document.getElementById('secret').classList.toggle('show')">💌 Секретик</button>
+    <div class="secret-text" id="secret">
+      <div class="placeholder" style="text-align:left;">
+        <p>Дорогая Полина, поздравляю тебя с таким замечательным днем! Данный текст я пыталась сочинить как можно красочнее и развернутее. Надеюсь, что все получилось и это не выглядит как заметки сумасшедшего.</p>
+        <p>Что я хочу тебе сказать: я очень рада, что мы с тобой познакомились в тот день в трудовом отряде. Тогда был мой последний год участия в таких отрядах, и он же оказался очень тяжелым годом, но стал намного значимее. Не зря говорят: «Не было бы счастья, да несчастье помогло». Увы, это самая горькая, но одна из самых частых поговорок в жизни. И я действительно рада такому исходу, иначе бы мы не смогли познакомиться. По правде говоря, я даже не помню момента, когда мы начали с тобой общаться. Это произошло так, будто мы с тобой были знакомы. Вот такое чувство у меня появляется каждый раз, когда я вспоминаю этот момент из нашей общей жизни на данный момент.</p>
+        <p>А сейчас тебе исполняется 18 лет, и меня это удивляет: вроде недавно была совсем маленькой, а уже 18, совершеннолетняя! Это вообще законно? А вот теперь точно будет законно, потому что ты стала дееспособной гражданкой Российской Федерации со всеми правами и обязанностями. Этот этап жизни тяжело начинать одному, но у тебя есть мы: все твои друзья, родственники, любимые питомцы. Мы все готовы помочь тебе пройти через этот этап и сделать его намного проще, счастливее и красочнее. Как в каком-то мультике «My Little Pony», где дружба победит все невзгоды, которые тебя беспокоят.</p>
+        <p>Хочу поздравить тебя с Днем рождения. Пожелать хочу всего на свете: от крепкого ментального здоровья до благополучия в жизни. Ты - самая замечательная моя подруга, которую я очень ценю. Знай, что ты очень замечательный и добрый человек, и я хочу защищать тебя и всегда поддерживать в твоих новых начинаниях.</p>
+        <p>Знаешь, хочу кое-что напомнить тебе: твоя улыбка настолько мягкая и лучистая, что у любого будут подкашиваться ноги. А как же твои замечательные глазки, в которых светится столько тепла и искренности, что рядом с тобой становится уютнее! А еще отдельно хочу сказать про твои руки. Они у тебя такие хрупкие и маленькие, что кажутся совсем беззащитными, - но в них чувствуется столько силы и тепла. Эти руки способны бережно заботиться, поддерживать и успокаивать, а это так важно во врачебном деле. В них есть и мягкость, и уверенность, и ответственность - все то, из чего складывается настоящее умение помогать людям. И при этом ты настоящая мастерица на все руки.</p>
+        <p>Хоть я и пишу про мягкость, но также нужно уделить внимание тому, что ты можешь с легкостью быть жестче и отпинать любого (Сережу в том числе, несмотря на то, что тот ходил на самбо). Твои длинные волосы, хоть сейчас и подстрижены, такие мягкие и кудрявые, что к ним так и хочется прикасаться и заплетать их. Твой стиль в одежде часто напоминает мне зефирку - он у тебя такой же мягкий и воздушный, особенно на Дне поселка. Ты вся прекрасна, Полина, и я не устану этого повторять. Еще раз поздравляю тебя с твоим днем рождения!</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>SKZ · MED · 18 · MADE WITH LOVE 💜</footer>
+</main>
+
+<audio id="bg-music" loop>
+  <source src="song.mp3" type="audio/mpeg">
+</audio>
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">🔇</button>
+
+<script>
+const floaters = ['🎤','💜','🌸','⭐','🎧','🐰','✨','🎶','💊','🩺','💗','🎵','👻','🐱','🦋','🌈'];
+for (let i = 0; i < 20; i++) {
+  const el = document.createElement('div');
+  el.className = 'flyer';
+  el.textContent = floaters[Math.floor(Math.random()*floaters.length)];
+  el.style.left = Math.random()*100 + 'vw';
+  el.style.top  = Math.random()*100 + 'vh';
+  el.style.fontSize = (14 + Math.random()*24) + 'px';
+  el.style.animation = `drift ${8 + Math.random()*8}s ease-in-out infinite`;
+  el.style.animationDelay = (Math.random()*5) + 's';
+  document.body.appendChild(el);
+}
+[['🐰','70vh','28px','14s'],['🐱','30vh','24px','20s'],['👻','50vh','22px','16s']].forEach(([e,t,s,d])=>{
+  const r = document.createElement('div');
+  r.className='flyer'; r.textContent=e; r.style.top=t; r.style.fontSize=s;
+  r.style.animation = `walk ${d} linear infinite`;
+  if (e==='🐱'||e==='👻') r.style.animation = `walk ${d} linear infinite reverse`;
+  document.body.appendChild(r);
+});
+for (let i = 0; i < 10; i++) {
+  const el = document.createElement('div');
+  el.className = 'flyer'; el.textContent = '✨';
+  el.style.left = Math.random()*100 + 'vw';
+  el.style.top  = Math.random()*100 + 'vh';
+  el.style.fontSize = (10 + Math.random()*14) + 'px';
+  el.style.animation = `sparkle ${2 + Math.random()*2}s ease-in-out infinite`;
+  el.style.animationDelay = (Math.random()*3) + 's';
+  document.body.appendChild(el);
+}
+
+let qIndex = 0, points = 0;
+document.querySelectorAll('.opt').forEach(o => {
+  o.addEventListener('click', () => {
+    points += Number(o.dataset.point);
+    qIndex++;
+    document.querySelectorAll('.q-block.active').forEach(b => b.classList.remove('active'));
+    if (qIndex < 5) {
+      document.querySelector(`.q-block[data-q="${qIndex}"]`).classList.add('active');
+    } else {
+      showResult();
+      document.querySelector('.q-block[data-q="result"]').classList.add('active');
+    }
+  });
+});
+
+function showResult() {
+  const emo   = document.getElementById('resultEmoji');
+  const ttl   = document.getElementById('resultTitle');
+  const txt   = document.getElementById('resultText');
+  const photo = document.getElementById('resultPhoto');
+
+  let emoji, title, text, src;
+
+  if (points <= 7) {
+    emoji = '😴'; title = 'Первокурсник в отрицании';
+    text  = 'Делаешь вид, что все под контролем, а на самом деле хочешь спать. Это нормально. Держись - ты справишься!';
+    src   = 'result1.jpg';
+  } else if (points <= 11) {
+    emoji = '☕'; title = 'Первокурсник на кофеине';
+    text  = 'Кофе - твой лучший друг, анатомия - просто еще один день. Я в тебя верю!';
+    src   = 'result2.jpg';
+  } else {
+    emoji = '💪'; title = 'Первокурсник-легенда';
+    text  = 'Спокойно, красиво и музыкой или анатомией в наушниках. Ты выжила первый курс(первый семестр) и выглядишь потрясающе.';
+    src   = 'result3.jpg';
+  }
+
+  emo.textContent = emoji;
+  ttl.textContent = title;
+  txt.textContent = text;
+
+  photo.onerror = () => {
+    photo.style.display = 'none';
+    emo.style.display   = 'block';
+  };
+  photo.onload  = () => {
+    photo.style.display = 'block';
+    emo.style.display   = 'none';
+  };
+  photo.style.display = 'none';
+  emo.style.display   = 'none';
+  photo.src = src;
+}
+
+function openCard() {
+  document.getElementById('game').classList.add('hide');
+  document.getElementById('card').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const audio = document.getElementById('bg-music');
+  if (audio) {
+    audio.play().then(() => {
+      document.getElementById('musicBtn').textContent = '🔊';
+    }).catch(() => {});
+  }
+}
+
+const audio = document.getElementById('bg-music');
+const musicBtn = document.getElementById('musicBtn');
+function toggleMusic() {
+  if (audio.paused) {
+    audio.play();
+    musicBtn.textContent = '🔊';
+  } else {
+    audio.pause();
+    musicBtn.textContent = '🔇';
+  }
+}
+</script>
+</body>
+</html>
